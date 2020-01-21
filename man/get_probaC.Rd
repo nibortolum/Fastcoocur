@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{get_probaC}
 \alias{get_probaC}
-\title{Compute probas over slices}
+\title{Compute cooccurences probabilities over slices}
 \usage{
 get_probaC(df, mat)
 }
@@ -12,5 +12,8 @@ get_probaC(df, mat)
 \item{mat}{a species matrix}
 }
 \description{
-Compute probas over slices
+Compute cooccurences probabilities over slices
+}
+\details{
+Internal function. Not to be used by itself
 }

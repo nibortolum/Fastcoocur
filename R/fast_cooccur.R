@@ -1,17 +1,28 @@
 #' Fast Cooccur - compute exact cooccurence betwenn species pairs
 #'
-#' @param mat A apecies (rows) x sites (column) matrix.
+#' @details Fast Cooccur relies on \code{\link[future]{future}} and \code{\link[furrr]{future_map_dfr}} to handle parallel computing.
+#' This way fast_cooccur is backend - agnostic. You can specify the bakend with the function \code{\link[future]{plan}}.
+#' By default, it runs with \code{plan(sequential)}, which run as a single R process. To go parallel on a desktop machine, call \code{plan(multiprocess)}
+#' before calling \code{fast_cooccur}. On windows machines, it will fork the current R Session. On Unix machines (OSX nd Linux), it will go multicore.
+#'
+#' If you need to process very large matrices in a short amount of time, it is possible to run the function on a HPC configured to run the package future.
+#'
+#' @param spp_site_mat A apecies (rows) x sites (column) matrix.
 #' @param chunks The number of chunks into which the data should be split.
+#' If yorking in parallel mode, it is wise to keep it a multiple of the computing units (cores or workers).
+#' @param verbose TRUE or FALSE. If TRUE, display some info about the computation
+#' @param progress TRUE or FALSE. If TRUE, display a progress bar in parallel mode. Only meaningful if chunks is greather
+#' than the number of computing units
 #'
 #' @return
 #' A cooccur object
 #' @export
 #'
 #' @examples
-fast_cooccur <- function(mat, chunks = 2) {
+fast_cooccur <- function(spp_site_mat, chunks = 2, verbose = TRUE, progress = TRUE) {
 
-  cat("Preparing for analysis \n")
-  spp_site_mat <- mat
+  if(verbose) cat("Preparing for analysis \n")
+  spp_site_mat[spp_site_mat>0] <- 1
   # HANDLE ARGUEMENTS
   true_rand_classifier = 0.1
   spp_key <- data.frame(num=1:nrow(spp_site_mat),spp=row.names(spp_site_mat))
@@ -22,7 +33,7 @@ fast_cooccur <- function(mat, chunks = 2) {
   nspp <- nrow(spp_site_mat)
   spp_pairs <- choose(nspp,2)
 
-  cat("Generating", spp_pairs, "species pairs\n")
+  if(verbose) cat("Generating", spp_pairs, "species pairs\n")
 
   sp.df <- t(combn(nspp,2, simplify = TRUE))
   sp.df <- data.frame(spp = sp.df[,1], spp_next = sp.df[,2])
@@ -33,7 +44,7 @@ fast_cooccur <- function(mat, chunks = 2) {
   # chunks <- 1:(ncores - 1)
   split.group <- c(rep(1:(chunks -1), each = chunksize), rep(chunks, myl-(chunks-1)*chunksize))
 
-  cat("Splitting in", chunks, "chunks of roughly", chunksize, "pairs\n\n")
+  if(verbose) cat("Splitting in", chunks, "chunks of roughly", chunksize, "pairs\n\n")
 
   #define fonction to compute probas to be passed to purrr::map
   get.proba <- function(df, mat){
@@ -44,11 +55,11 @@ fast_cooccur <- function(mat, chunks = 2) {
   }
 
   #launching the computation
-  cat("Computing probas\n")
+  if(verbose) cat("Computing Cooccurences\n")
 
   output <- sp.df %>%
     split(split.group) %>%
-    furrr::future_map_dfr(get.proba, mat = mat, .progress = TRUE) %>%
+    furrr::future_map_dfr(get.proba, mat = spp_site_mat, .progress = progress) %>%
     filter(exp_cooccur >= 1)
 
   n_omitted <- spp_pairs - nrow(output)
@@ -73,7 +84,7 @@ fast_cooccur <- function(mat, chunks = 2) {
 
 
   output_list$spp_key <- spp_key
-  output_list$spp.names = row.names(mat)
+  output_list$spp.names = row.names(spp_site_mat)
 
   output_list$omitted <- n_omitted
   output_list$pot_pairs <- spp_pairs

@@ -4,16 +4,30 @@
 \alias{fast_cooccur}
 \title{Fast Cooccur - compute exact cooccurence betwenn species pairs}
 \usage{
-fast_cooccur(mat, chunks = 2)
+fast_cooccur(spp_site_mat, chunks = 2, verbose = TRUE, progress = TRUE)
 }
 \arguments{
-\item{mat}{A apecies (rows) x sites (column) matrix.}
+\item{spp_site_mat}{A apecies (rows) x sites (column) matrix.}
 
-\item{chunks}{The number of chunks into which the data should be split.}
+\item{chunks}{The number of chunks into which the data should be split.
+If yorking in parallel mode, it is wise to keep it a multiple of the computing units (cores or workers).}
+
+\item{verbose}{TRUE or FALSE. If TRUE, display some info about the computation}
+
+\item{progress}{TRUE or FALSE. If TRUE, display a progress bar in parallel mode. Only meaningful if chunks is greather
+than the number of computing units}
 }
 \value{
 A cooccur object
 }
 \description{
 Fast Cooccur - compute exact cooccurence betwenn species pairs
+}
+\details{
+Fast Cooccur relies on \code{\link[future]{future}} and \code{\link[furrr]{future_map_dfr}} to handle parallel computing.
+This way fast_cooccur is backend - agnostic. You can specify the bakend with the function \code{\link[future]{plan}}.
+By default, it runs with \code{plan(sequential)}, which run as a single R process. To go parallel on a desktop machine, call \code{plan(multiprocess)}
+before calling \code{fast_cooccur}. On windows machines, it will fork the current R Session. On Unix machines (OSX nd Linux), it will go multicore.
+
+If you need to process very large matrices in a short amount of time, it is possible to run the function on a HPC configured to run the package future.
 }

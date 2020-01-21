@@ -1,10 +1,13 @@
 #include <Rcpp.h>
 using namespace Rcpp;
-//' Compute probas over slices
+//' Compute cooccurences probabilities over slices
 //'
 //' @param df a DataFrame of species pairs
 //' @param mat a species matrix
 //'
+//' @details Internal function. Not to be used by itself
+//' @useDynLib FastCooccur
+//' @importFrom Rcpp sourceCpp
 // [[Rcpp::export]]
 NumericMatrix get_probaC(DataFrame df, NumericMatrix mat){
 
