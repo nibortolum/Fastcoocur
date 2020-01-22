@@ -7,6 +7,14 @@
 #'
 #' If you need to process very large matrices in a short amount of time, it is possible to run the function on a HPC configured to run the package future.
 #'
+#' fast_coocur() will perform a strict sanity check on spp_site_mat before launching computation, and will stop execution if any of the conditions are not met.
+#' Please ensure that :
+#' \enumerate{
+#'   \item spp_site_mat is a matrix (not a dataframe)
+#'   \item all species are present at least once in the dataset
+#'   \item you can give row.names to yourmatrix. It might be useful for downstream analysis.
+#' }
+#'
 #' @param spp_site_mat A apecies (rows) x sites (column) matrix.
 #' @param chunks The number of chunks into which the data should be split.
 #' If yorking in parallel mode, it is wise to keep it a multiple of the computing units (cores or workers).
@@ -20,6 +28,9 @@
 #'
 #' @examples
 fast_cooccur <- function(spp_site_mat, chunks = 2, verbose = TRUE, progress = TRUE) {
+
+  if(verbose) cat("Sanity check ...\n")
+  sanity_check(spp_site_mat, TRUE)
 
   if(verbose) cat("Preparing for analysis \n")
   spp_site_mat[spp_site_mat>0] <- 1
@@ -35,9 +46,9 @@ fast_cooccur <- function(spp_site_mat, chunks = 2, verbose = TRUE, progress = TR
 
   if(verbose) cat("Generating", spp_pairs, "species pairs\n")
 
-  sp.df <- t(combn(nspp,2, simplify = TRUE))
+  sp.df <- t(utils::combn(nspp,2, simplify = TRUE))
   sp.df <- data.frame(spp = sp.df[,1], spp_next = sp.df[,2])
-  ncores <- availableCores() -1
+  ncores <- future::availableCores() -1
   myl <- spp_pairs
   chunksize <- floor(myl/chunks)
 
@@ -60,7 +71,7 @@ fast_cooccur <- function(spp_site_mat, chunks = 2, verbose = TRUE, progress = TR
   output <- sp.df %>%
     split(split.group) %>%
     furrr::future_map_dfr(get.proba, mat = spp_site_mat, .progress = progress) %>%
-    filter(exp_cooccur >= 1)
+    dplyr::filter(exp_cooccur >= 1)
 
   n_omitted <- spp_pairs - nrow(output)
 

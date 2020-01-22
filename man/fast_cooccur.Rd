@@ -30,4 +30,12 @@ By default, it runs with \code{plan(sequential)}, which run as a single R proces
 before calling \code{fast_cooccur}. On windows machines, it will fork the current R Session. On Unix machines (OSX nd Linux), it will go multicore.
 
 If you need to process very large matrices in a short amount of time, it is possible to run the function on a HPC configured to run the package future.
+
+fast_coocur() will perform a strict sanity check on spp_site_mat before launching computation, and will stop execution if any of the conditions are not met.
+Please ensure that :
+\enumerate{
+  \item spp_site_mat is a matrix (not a dataframe)
+  \item all species are present at least once in the dataset
+  \item you can give row.names to yourmatrix. It might be useful for downstream analysis.
+}
 }

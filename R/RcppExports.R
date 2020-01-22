@@ -7,9 +7,7 @@
 #' @param mat a species matrix
 #'
 #' @details Internal function. Not to be used by itself
-#' @useDynLib FastCooccur
-#' @importFrom Rcpp sourceCpp
 get_probaC <- function(df, mat) {
-    .Call('_FastCooccur_get_probaC', PACKAGE = 'FastCooccur', df, mat)
+    .Call(`_FastCooccur_get_probaC`, df, mat)
 }
 

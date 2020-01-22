@@ -6,8 +6,6 @@ using namespace Rcpp;
 //' @param mat a species matrix
 //'
 //' @details Internal function. Not to be used by itself
-//' @useDynLib FastCooccur
-//' @importFrom Rcpp sourceCpp
 // [[Rcpp::export]]
 NumericMatrix get_probaC(DataFrame df, NumericMatrix mat){
 
