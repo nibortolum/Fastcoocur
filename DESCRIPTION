@@ -15,8 +15,10 @@ Imports:
     furrr,
     future,
     magrittr,
-    utils
+    utils,
+    rlang (>= 0.1.2)
 LinkingTo: Rcpp
 RoxygenNote: 7.0.2
 Suggests: 
-    testthat (>= 2.1.0)
+    testthat (>= 2.1.0),
+    roxygen2

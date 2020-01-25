@@ -71,7 +71,7 @@ fast_cooccur <- function(spp_site_mat, chunks = 2, verbose = TRUE, progress = TR
   output <- sp.df %>%
     split(split.group) %>%
     furrr::future_map_dfr(get.proba, mat = spp_site_mat, .progress = progress) %>%
-    dplyr::filter(exp_cooccur >= 1)
+    dplyr::filter(.data$exp_cooccur >= 1)
 
   n_omitted <- spp_pairs - nrow(output)
 
