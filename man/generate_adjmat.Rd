@@ -4,10 +4,14 @@
 \alias{generate_adjmat}
 \title{Compute Adjacency Matrix from Cooccur object}
 \usage{
-generate_adjmat(cooccur)
+generate_adjmat(cooccur, p.adj = "none", verbose = TRUE)
 }
 \arguments{
 \item{cooccur}{A cooccur object retruned by fast_cooccur}
+
+\item{p.adj}{a correction method for the p.value}
+
+\item{verbose}{TRUE or FALSE. If TRUE, display meaningful messages about the progression}
 }
 \value{
 A signed adjacency matrix

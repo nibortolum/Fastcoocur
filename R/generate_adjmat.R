@@ -14,11 +14,11 @@ generate_adjmat <- function(cooccur, p.adj = "none", verbose = TRUE){
   }
   if(p.adj != "none"){
 
-    if(verbose) {cat("correction pvalues \n")}
+    if(verbose) {cat("correcting pvalues... \n")}
     cooccur$results$p_gt <- p.adjust(cooccur$results$p_gt, method = p.adj)
     cooccur$results$p_lt <- p.adjust(cooccur$results$p_lt, method = p.adj)
   }
-  if(verbose){cat("Rendering adjacency matrix\n")}
+  if(verbose){cat("Rendering adjacency matrix...\n")}
   positive <- as.matrix(cooccur$results[which(cooccur$results$p_gt < 0.05) ,c("spp", "spp_next")])
   negative <- as.matrix(cooccur$results[which(cooccur$results$p_lt < 0.05) ,c("spp", "spp_next")])
 
