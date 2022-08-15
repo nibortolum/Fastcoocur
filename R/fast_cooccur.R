@@ -19,7 +19,7 @@
 #' @param chunks The number of chunks into which the data should be split.
 #' If yorking in parallel mode, it is wise to keep it a multiple of the computing units (cores or workers).
 #' @param verbose TRUE or FALSE. If TRUE, display some info about the computation
-#' @param progress TRUE or FALSE. If TRUE, display a progress bar in parallel mode. Only meaningful if chunks is greather
+#' @param progress deprecated. does actually nothing TRUE or FALSE. If TRUE, display a progress bar in parallel mode. Only meaningful if chunks is greather
 #' than the number of computing units
 #'
 #' @return
@@ -36,6 +36,9 @@ fast_cooccur <- function(spp_site_mat, chunks = 2, verbose = TRUE, progress = TR
   spp_site_mat[spp_site_mat>0] <- 1
   # HANDLE ARGUEMENTS
   true_rand_classifier = 0.1
+  if(is.null(row.names(spp_site_mat))){
+    row.names(spp_site_mat) <- 1:nrow(spp_site_mat)
+  }
   spp_key <- data.frame(num=1:nrow(spp_site_mat),spp=row.names(spp_site_mat))
 
   # ORGANIZE & INITIALIZE FOR ANALYSIS
@@ -70,7 +73,7 @@ fast_cooccur <- function(spp_site_mat, chunks = 2, verbose = TRUE, progress = TR
 
   output <- sp.df %>%
     split(split.group) %>%
-    furrr::future_map_dfr(get.proba, mat = spp_site_mat, .progress = progress) %>%
+    furrr::future_map_dfr(get.proba, mat = spp_site_mat) %>%
     dplyr::filter(.data$exp_cooccur >= 1)
 
   n_omitted <- spp_pairs - nrow(output)

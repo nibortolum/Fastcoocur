@@ -19,7 +19,7 @@ sanity_check <- function(spp_site_mat, strict = FALSE){
   }
 
   if(is.null(row.names(spp_site_mat))) {
-    warning("spp_site_mat as no rownames. fqst_cooccur will generate dummy names\n")
+    warning("spp_site_mat as no rownames. fast_cooccur will generate dummy names\n")
   }
 
   if(any(rowSums(spp_site_mat) == 0)){
