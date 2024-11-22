@@ -14,7 +14,7 @@ If yorking in parallel mode, it is wise to keep it a multiple of the computing u
 
 \item{verbose}{TRUE or FALSE. If TRUE, display some info about the computation}
 
-\item{progress}{TRUE or FALSE. If TRUE, display a progress bar in parallel mode. Only meaningful if chunks is greather
+\item{progress}{deprecated. does actually nothing TRUE or FALSE. If TRUE, display a progress bar in parallel mode. Only meaningful if chunks is greather
 than the number of computing units}
 }
 \value{

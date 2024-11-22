@@ -6,7 +6,6 @@
 \alias{FastCooccur-package}
 \title{FastCooccur: Fast and Scalable exact species cooccurences}
 \description{
-More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+More about what it does (maybe more than one line) Use four spaces when indenting paragraphs within the Description.
 }
 \keyword{internal}
